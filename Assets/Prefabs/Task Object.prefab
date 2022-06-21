@@ -178,7 +178,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1890943118266767412
 RectTransform:
   m_ObjectHideFlags: 0
@@ -711,7 +711,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 345.2, y: 50}
+  m_SizeDelta: {x: 355, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8697529684314873641
 CanvasRenderer:
@@ -760,6 +760,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8697529684477331260}
+  - component: {fileID: 8980868514208960777}
   m_Layer: 5
   m_Name: Task Object
   m_TagString: Untagged
@@ -790,8 +791,26 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -272, y: -110}
+  m_SizeDelta: {x: 272, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &8980868514208960777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8697529684477331263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1de02235a38f8494f8cc43b82d214d54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DurationTMPro: {fileID: 8697529685843314451}
+  TitleTMPro: {fileID: 8697529685438359550}
+  TaskInfo:
+    DurationSeconds: 6
+    Title: "\u0410\u043C\u0438\u043D\u044C"
+    Description: 
 --- !u!1 &8697529684598538455
 GameObject:
   m_ObjectHideFlags: 0
@@ -879,7 +898,7 @@ GameObject:
   - component: {fileID: 8697529685438359551}
   - component: {fileID: 8697529685438359550}
   m_Layer: 5
-  m_Name: Task Text (TMP) (1)
+  m_Name: Title Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

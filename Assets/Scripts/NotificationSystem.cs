@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class NotificationSystem : MonoBehaviour
 {
+    
     public static NotificationSystem instance { get; private set; }
 
     [SerializeField] private AudioClip NotificationSound;
