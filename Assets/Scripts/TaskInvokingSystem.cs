@@ -11,6 +11,7 @@ public class TaskInvokingSystem : MonoBehaviour
 
     //[Header("Read-Only")]
     [SerializeField] private List<TaskStruct> TasksInfo;
+    [SerializeField] private List<Task> Tasks;
     [SerializeField, Tooltip("Debug-view-only")] private int CurrentTaskIndex = 0;
 
     [SerializeField] private Vector3 origin = new Vector3(0, 200, 0);
@@ -47,17 +48,20 @@ public class TaskInvokingSystem : MonoBehaviour
             task.transform.localPosition = new Vector3(origin.x, position, origin.z);
             task.TaskInfo = TasksInfo[i];
             task.OnSpawned();
+
+            Tasks.Add(task);
         }
     }
 
     private IEnumerator LoopTasks()
     {
-        if (TasksInfo.Count == 0) yield break;
+        if (TasksInfo.Count == 0 || CurrentTaskIndex >= TasksInfo.Count) yield break;
 
         yield return new WaitForSecondsRealtime(TasksInfo[CurrentTaskIndex].DurationSeconds);
-        CurrentTaskIndex++;
-
         NotificationSystem.instance.Notify();
+        Tasks[CurrentTaskIndex].OnFinished();
+
+        CurrentTaskIndex++;
 
         yield return LoopTasks();
     }

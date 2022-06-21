@@ -807,6 +807,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DurationTMPro: {fileID: 8697529685843314451}
   TitleTMPro: {fileID: 8697529685438359550}
+  DoneToggle: {fileID: 8795581850254823133}
   TaskInfo:
     DurationSeconds: 6
     Title: "\u0410\u043C\u0438\u043D\u044C"

@@ -1,12 +1,14 @@
 using UnityEngine;
 using System;
 using TMPro;
+using UnityEngine.UI;
 
 public class Task : MonoBehaviour
 {
 
     [SerializeField] private TextMeshProUGUI DurationTMPro;
     [SerializeField] private TextMeshProUGUI TitleTMPro;
+    [SerializeField] private Toggle DoneToggle;
 
     public TaskStruct TaskInfo;
 
@@ -14,10 +16,11 @@ public class Task : MonoBehaviour
     {
         DurationTMPro.text = TaskInfo.DurationSeconds.ToString();
         TitleTMPro.text = TaskInfo.Title;
+        DoneToggle.isOn = false;
     }
     public void OnFinished()
     {
-
+        DoneToggle.isOn = true;
     }
 }
 [Serializable]
