@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System;
-
+using UnityEngine.UI;
 using UnityEngine;
 
 public class TaskInvokingSystem : MonoBehaviour
@@ -9,27 +8,19 @@ public class TaskInvokingSystem : MonoBehaviour
     [SerializeField] private Task PrefabTask;
     [SerializeField] private Transform TasksHandler;
 
-    //[Header("Read-Only")]
     [SerializeField] private List<TaskStruct> TasksInfo;
     [SerializeField] private List<Task> Tasks;
     [SerializeField, Tooltip("Debug-view-only")] private int CurrentTaskIndex = 0;
 
     [SerializeField] private Vector3 origin = new Vector3(0, 200, 0);
-    private float TaskHeight = 90;
+    private float TaskHeight = 65;
 
     [SerializeField] private Canvas _Canvas;
+    [SerializeField] private Button AddTaskButton;
 
     private void Start()
     {
         Application.runInBackground = true;
-
-        /*Tasks = new List<Task>()
-        {
-            new Task(15, "Разминка", ""),
-            new Task(20, "Работа над проектом 1", ""),
-            new Task(10, "Разминка", ""),
-            new Task(12, "Работа над проектом 2", "")
-        };*/
 
         GenerateTasksGUI();
 
@@ -40,16 +31,7 @@ public class TaskInvokingSystem : MonoBehaviour
     {
         for (int i = 0; i < TasksInfo.Count; i++)
         {
-            float scalePreserverance = 800.0f / _Canvas.GetComponent<RectTransform>().rect.width;
-
-            float position = origin.y + i * (-TaskHeight * 1.1f * scalePreserverance);
-
-            Task task = Instantiate(PrefabTask, Vector3.zero, Quaternion.identity, TasksHandler) as Task;
-            task.transform.localPosition = new Vector3(origin.x, position, origin.z);
-            task.TaskInfo = TasksInfo[i];
-            task.OnSpawned();
-
-            Tasks.Add(task);
+            CreateTask();
         }
     }
 
@@ -57,7 +39,7 @@ public class TaskInvokingSystem : MonoBehaviour
     {
         if (TasksInfo.Count == 0 || CurrentTaskIndex >= TasksInfo.Count) yield break;
 
-        yield return new WaitForSecondsRealtime(TasksInfo[CurrentTaskIndex].DurationSeconds);
+        yield return new WaitForSeconds(TasksInfo[CurrentTaskIndex].DurationSeconds);
         NotificationSystem.instance.Notify();
         Tasks[CurrentTaskIndex].OnFinished();
 
@@ -66,15 +48,29 @@ public class TaskInvokingSystem : MonoBehaviour
         yield return LoopTasks();
     }
 
-    /*public void CreateTask()
+    public void CreateTask()
     {
-        float position = Tasks.Count * (TaskHeight * 1.1f);
+        float scalePreserverance = _Canvas.GetComponent<CanvasScaler>().referenceResolution.x / _Canvas.GetComponent<RectTransform>().rect.width;
 
-        Task task = Instantiate(PrefabTask, new Vector3(origin.x, position, origin.z), Quaternion.identity, TasksHandler);
+        float position = origin.y + Tasks.Count * (-TaskHeight * 1.1f * scalePreserverance);
+
+        Task task = Instantiate(PrefabTask, Vector3.zero, Quaternion.identity, TasksHandler) as Task;
+        task.transform.localPosition = new Vector3(origin.x, position, origin.z);
+        task.TaskInfo = TasksInfo[Tasks.Count];
+        task.OnSpawned();
+
         Tasks.Add(task);
-        OnTaskAdded?.Invoke();
-    }*/
+
+        AddTaskButton.transform.localPosition = new Vector3(0, origin.y + Tasks.Count * (-TaskHeight * 1.1f * scalePreserverance), 0);
+    }
+
+    public void SetTimeSpeed(int speed)
+    {
+        Time.timeScale = speed;
+    }
 }
+
+
 
 /*class LiveTileHelper
 {
