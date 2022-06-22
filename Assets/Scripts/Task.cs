@@ -26,11 +26,11 @@ public class Task : MonoBehaviour
 [Serializable]
 public struct TaskStruct
 {
-    public int DurationSeconds;
+    public uint DurationSeconds;
     public string Title;
     public string Description;
 
-    public TaskStruct(int durationSeconds, string title, string description)
+    public TaskStruct(uint durationSeconds, string title, string description)
     {
         DurationSeconds = durationSeconds;
         Title = title;
