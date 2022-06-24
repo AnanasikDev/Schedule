@@ -35,6 +35,11 @@ public class Task : MonoBehaviour
     {
         DoneToggle.isOn = true;
     }
+    public void DeleteTask()
+    {
+        TaskInvokingSystem.instance.DeleteTask(this);
+        Destroy(gameObject);
+    }
 }
 [Serializable]
 public class TaskStruct

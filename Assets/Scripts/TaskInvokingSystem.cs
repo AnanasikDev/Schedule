@@ -13,7 +13,7 @@ public class TaskInvokingSystem : MonoBehaviour
     [SerializeField] private List<TaskStruct> TasksInfo;
 
     [SerializeField] private Vector3 origin = new Vector3(0, 0, 0);
-    private float TaskHeight = 65;
+    private float TaskHeight = 60;
 
     [SerializeField] private Canvas _Canvas;
     [SerializeField] private Button AddTaskButton;
@@ -30,6 +30,17 @@ public class TaskInvokingSystem : MonoBehaviour
 
     public static TaskInvokingSystem instance { get; private set; }
 
+    public void DeleteTask(Task task)
+    {
+        Tasks.Remove(task);
+        TasksInfo.Remove(task.TaskInfo);
+
+        RecalculateTasksPositions();
+
+        CalculateTimeThresholds();
+        Restart();
+        SetUpTimeBar();
+    }
     public void CalculateTimeThresholds()
     {
         TimeBar.localPosition = Vector3.up * TimeBar.rect.height;
@@ -120,34 +131,55 @@ public class TaskInvokingSystem : MonoBehaviour
         Tasks.Add(task);
         TasksInfo.Add(task.TaskInfo);
 
-        AddTaskButton.transform.localPosition = new Vector3(0, origin.y + Tasks.Count * (-TaskHeight * 1.1f * scalePreserverance), 0);
-        TimeBarParent.localPosition = Tasks[0].transform.localPosition + Vector3.right * -200;
-        
-        float gapHeight = (TaskHeight * 1.1f * scalePreserverance) - 50 * scalePreserverance;
-        float height = Tasks.Count * 50 * scalePreserverance + gapHeight * (Tasks.Count - 1);
-        //float height = gapHeight * (Tasks.Count - 1) + Tasks.Count * 50;
+        SetUpAddTaskButton();
 
-        //EasyDebug.Log("scale = ", scale, "gap height = ", gapHeight, "height = ", height);
-
-        float y = (Tasks[0].transform.localPosition.y + Tasks[Tasks.Count - 1].transform.localPosition.y) / 2f;
-
-        TimeBarParent.transform.localPosition = new Vector3(-200, y, 0); //gapHeight * (Tasks.Count - 1) + Tasks.Count * 50
-        //TimeBarParent.localScale = new Vector3(1, scale, 1);
-        TimeBarParent.sizeDelta = new Vector2(15, height);
-        TimeBar.sizeDelta = new Vector2(15, height);
-        
-        
-        TimeBar.localPosition = Vector3.up * TimeBar.rect.height;
-        TimeElapsed = 0;
-
+        SetUpTimeBar();
 
         CalculateTimeThresholds();
+    }
+    private void SetUpAddTaskButton()
+    {
+        AddTaskButton.transform.localPosition = new Vector3(0, origin.y + Tasks.Count * (-TaskHeight * 1.1f * scalePreserverance), 0);
+    }
+    private void SetUpTimeBar()
+    {
+        if (Tasks.Count == 0)
+        {
+            TimeBarParent.sizeDelta = Vector2.zero;
+            return;
+        }
 
-        //TimeBar.SetScaleForwardRelative(Vector3.down * scale + Vector3.right + Vector3.forward);
+        //TimeBarParent.localPosition = Tasks[0].transform.localPosition + Vector3.right * -200;
 
+        float gapHeight = (TaskHeight * 1.1f * scalePreserverance) - 50 * scalePreserverance;
+        float height = Tasks.Count * 50 * scalePreserverance + gapHeight * (Tasks.Count - 1);
+        float y = (Tasks[0].transform.localPosition.y + Tasks[Tasks.Count - 1].transform.localPosition.y) / 2f;
+        // y - средн€€ позици€ между первой и последней задачей
+
+        TimeBarParent.localPosition = new Vector3(-200, y, 0);
+        TimeBarParent.sizeDelta = new Vector2(15, height);
+        TimeBar.sizeDelta = new Vector2(15, height);
+
+        // —брос времени
+        TimeBar.localPosition = Vector3.up * TimeBar.rect.height;
+        TimeElapsed = 0;
+    }
+    public void RecalculateTasksPositions()
+    {
+        for (int i = 0; i < Tasks.Count; i++)
+        {
+            scalePreserverance = _Canvas.GetComponent<CanvasScaler>().scaleFactor;
+
+            float position = origin.y + i * (-TaskHeight * 1.1f * scalePreserverance);
+
+            Tasks[i].transform.localPosition = new Vector3(origin.x, position, origin.z);
+        }
+        SetUpAddTaskButton();
     }
     public void Restart()
     {
+        TimeElapsedTMPro.text = "0 mins elapsed";
+
         TimeElapsed = 0;
         TimeBar.localPosition = Vector3.up * TimeBar.rect.height;
         TimeElapsed = 0;
