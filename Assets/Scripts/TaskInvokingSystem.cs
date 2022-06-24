@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using TMPro;
+using System;
 
 public class TaskInvokingSystem : MonoBehaviour
 {
@@ -17,6 +19,7 @@ public class TaskInvokingSystem : MonoBehaviour
     [SerializeField] private Button AddTaskButton;
     [SerializeField] private RectTransform TimeBarParent;
     [SerializeField] private RectTransform TimeBar;
+    [SerializeField] private TextMeshProUGUI TimeElapsedTMPro;
 
     [Header("Read-only")]
     [SerializeField] private List<Task> Tasks;
@@ -71,7 +74,9 @@ public class TaskInvokingSystem : MonoBehaviour
 
         if (timeThresholds.Count == 0 || TimeElapsed >= timeThresholds[timeThresholds.Count - 1]) return;
 
-        TimeElapsed++;  
+        TimeElapsed++;
+
+        TimeElapsedTMPro.text = Math.Round(TimeElapsed / 60f, 2).ToString() + " mins elapsed";
 
         TimeBar.transform.localPosition += Vector3.down * (50 * scalePreserverance / TasksInfo[CurrentTaskIndex].DurationSeconds);
 
