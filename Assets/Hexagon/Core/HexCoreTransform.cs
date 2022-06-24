@@ -160,4 +160,9 @@ public static class TransformExtensions
         transform.Translate((direction - transform.localScale) / 2f);
         transform.localScale = direction;
     }
+    public static void RectTransform_SetScaleForwardRelative(this RectTransform transform, Vector3 direction)
+    {
+        transform.Translate((direction - transform.localScale) / 2f);
+        transform.localScale = direction;
+    }   
 }

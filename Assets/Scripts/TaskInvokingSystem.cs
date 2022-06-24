@@ -16,7 +16,7 @@ public class TaskInvokingSystem : MonoBehaviour
     [SerializeField] private Canvas _Canvas;
     [SerializeField] private Button AddTaskButton;
     [SerializeField] private RectTransform TimeBarParent;
-    private RectTransform TimeBar;
+    [SerializeField] private RectTransform TimeBar;
 
     [Header("Read-only")]
     [SerializeField] private List<Task> Tasks;
@@ -25,20 +25,36 @@ public class TaskInvokingSystem : MonoBehaviour
     [SerializeField] private uint TimeElapsed = 0;
     [SerializeField] private float scalePreserverance = 1f;
 
-    private void Start()
+    public static TaskInvokingSystem instance { get; private set; }
+
+    public void CalculateTimeThresholds()
     {
-        //scalePreserverance = _Canvas.GetComponent<CanvasScaler>().referenceResolution.x / _Canvas.GetComponent<RectTransform>().rect.width;
-        //EasyDebug.Log("Scale Preservance = ", scalePreserverance, _Canvas.GetComponent<CanvasScaler>().referenceResolution.x, _Canvas.GetComponent<RectTransform>().rect.width);
+        TimeBar.localPosition = Vector3.up * TimeBar.rect.height;
+        TimeElapsed = 0;
 
-        scalePreserverance = _Canvas.GetComponent<CanvasScaler>().scaleFactor;
-        TimeBar = TimeBarParent.GetChild(0).GetComponent<RectTransform>();
-
+        timeThresholds = new List<uint>();
         uint thr = 0;
         for (int i = 0; i < TasksInfo.Count; i++)
         {
             thr += TasksInfo[i].DurationSeconds;
             timeThresholds.Add(thr);
         }
+    }
+    public void SetTimeSpeed(int speed)
+    {
+        Time.timeScale = speed;
+    }
+
+    private void Start()
+    {
+        instance = this;
+
+        //scalePreserverance = _Canvas.GetComponent<CanvasScaler>().referenceResolution.x / _Canvas.GetComponent<RectTransform>().rect.width;
+        //EasyDebug.Log("Scale Preservance = ", scalePreserverance, _Canvas.GetComponent<CanvasScaler>().referenceResolution.x, _Canvas.GetComponent<RectTransform>().rect.width);
+
+        scalePreserverance = _Canvas.GetComponent<CanvasScaler>().scaleFactor;
+
+        CalculateTimeThresholds();
 
         Application.runInBackground = true;
 
@@ -47,14 +63,15 @@ public class TaskInvokingSystem : MonoBehaviour
         TimeBar.localPosition = Vector3.up * TimeBar.rect.height;
 
         InvokeRepeating("TickUpdate", 1, 1);
-        //StartCoroutine(LoopTasks());
     }
 
     private void TickUpdate()
     {
         Debug.Log(TimeElapsed);
 
-        TimeElapsed++;
+        if (timeThresholds.Count == 0 || TimeElapsed >= timeThresholds[timeThresholds.Count - 1]) return;
+
+        TimeElapsed++;  
 
         TimeBar.transform.localPosition += Vector3.down * (50 * scalePreserverance / TasksInfo[CurrentTaskIndex].DurationSeconds);
 
@@ -63,6 +80,8 @@ public class TaskInvokingSystem : MonoBehaviour
 
         if (TimeElapsed >= timeThresholds[CurrentTaskIndex] && CurrentTaskIndex < Tasks.Count)
         {
+            EasyDebug.Log($"Task {TasksInfo[CurrentTaskIndex].Title} : {Tasks[CurrentTaskIndex].TaskInfo.Title} finished on time {TimeElapsed}");
+
             NotificationSystem.instance.Notify();
             Tasks[CurrentTaskIndex].OnFinished();
 
@@ -88,12 +107,13 @@ public class TaskInvokingSystem : MonoBehaviour
 
         float position = origin.y + Tasks.Count * (-TaskHeight * 1.1f * scalePreserverance);
 
-        Task task = Instantiate(PrefabTask, Vector3.zero, Quaternion.identity, TasksHandler) as Task;
+        Task task = Instantiate(PrefabTask, Vector3.zero, Quaternion.identity, TasksHandler).GetComponent<Task>();
         task.transform.localPosition = new Vector3(origin.x, position, origin.z);
-        task.TaskInfo = TasksInfo[Tasks.Count];
+        task.TaskInfo = new TaskStruct();
         task.OnSpawned();
 
         Tasks.Add(task);
+        TasksInfo.Add(task.TaskInfo);
 
         AddTaskButton.transform.localPosition = new Vector3(0, origin.y + Tasks.Count * (-TaskHeight * 1.1f * scalePreserverance), 0);
         TimeBarParent.localPosition = Tasks[0].transform.localPosition + Vector3.right * -200;
@@ -110,14 +130,27 @@ public class TaskInvokingSystem : MonoBehaviour
         //TimeBarParent.localScale = new Vector3(1, scale, 1);
         TimeBarParent.sizeDelta = new Vector2(15, height);
         TimeBar.sizeDelta = new Vector2(15, height);
+        
+        
+        TimeBar.localPosition = Vector3.up * TimeBar.rect.height;
+        TimeElapsed = 0;
+
+
+        CalculateTimeThresholds();
 
         //TimeBar.SetScaleForwardRelative(Vector3.down * scale + Vector3.right + Vector3.forward);
 
     }
-
-    public void SetTimeSpeed(int speed)
+    public void Restart()
     {
-        Time.timeScale = speed;
+        TimeElapsed = 0;
+        TimeBar.localPosition = Vector3.up * TimeBar.rect.height;
+        TimeElapsed = 0;
+
+        for (int i = 0; i < Tasks.Count; i++)
+        {
+            Tasks[i].ResetTask();
+        }
     }
 }
 

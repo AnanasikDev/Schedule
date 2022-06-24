@@ -6,16 +6,29 @@ using UnityEngine.UI;
 public class Task : MonoBehaviour
 {
 
-    [SerializeField] private TextMeshProUGUI DurationTMPro;
-    [SerializeField] private TextMeshProUGUI TitleTMPro;
+    [SerializeField] private TMP_InputField DurationInputField;
+    [SerializeField] private TMP_InputField TitleInputField;
     [SerializeField] private Toggle DoneToggle;
 
     public TaskStruct TaskInfo;
 
+    public void ResetTask()
+    {
+        DoneToggle.isOn = false;
+    }
+    public void UpdateTitle()
+    {
+        TaskInfo.Title = TitleInputField.text;
+    }
+    public void UpdateDuration()
+    {
+        TaskInfo.DurationSeconds = (uint)Convert.ToInt32(DurationInputField.text) * 60;
+        TaskInvokingSystem.instance.CalculateTimeThresholds();
+    }
     public void OnSpawned()
     {
-        DurationTMPro.text = TaskInfo.DurationSeconds.ToString();
-        TitleTMPro.text = TaskInfo.Title;
+        DurationInputField.text = TaskInfo.DurationSeconds.ToString();
+        TitleInputField.text = TaskInfo.Title;
         DoneToggle.isOn = false;
     }
     public void OnFinished()
@@ -24,12 +37,16 @@ public class Task : MonoBehaviour
     }
 }
 [Serializable]
-public struct TaskStruct
+public class TaskStruct
 {
-    public uint DurationSeconds;
-    public string Title;
-    public string Description;
+    public uint DurationSeconds = 30;
+    public string Title = "Task";
+    public string Description = "";
 
+    public TaskStruct()
+    {
+
+    }
     public TaskStruct(uint durationSeconds, string title, string description)
     {
         DurationSeconds = durationSeconds;
