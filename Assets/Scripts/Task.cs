@@ -22,7 +22,9 @@ public class Task : MonoBehaviour
     }
     public void UpdateDuration()
     {
-        TaskInfo.DurationSeconds = (uint)Convert.ToInt32(DurationInputField.text) * 60;
+        if (uint.TryParse(DurationInputField.text, out TaskInfo.DurationSeconds)) TaskInfo.DurationSeconds *= 60;
+        else TaskInfo.DurationSeconds = 0;
+
         TaskInvokingSystem.instance.CalculateTimeThresholds();
     }
     public void OnSpawned()

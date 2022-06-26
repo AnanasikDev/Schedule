@@ -13,6 +13,7 @@ public class TaskInvokingSystem : MonoBehaviour
     [SerializeField] private List<TaskStruct> TasksInfo;
 
     [SerializeField] private Vector3 origin = new Vector3(0, 0, 0);
+    [SerializeField] private float TimeBarShift = -200;
     private float TaskHeight = 60;
 
     [SerializeField] private Canvas _Canvas;
@@ -27,6 +28,7 @@ public class TaskInvokingSystem : MonoBehaviour
     [SerializeField] private int CurrentTaskIndex = 0;
     [SerializeField] private uint TimeElapsed = 0;
     [SerializeField] private float scalePreserverance = 1f;
+    [SerializeField] private bool Repeating = false;
 
     public static TaskInvokingSystem instance { get; private set; }
 
@@ -54,13 +56,13 @@ public class TaskInvokingSystem : MonoBehaviour
             timeThresholds.Add(thr);
         }
     }
-    public void SetTimeSpeed(int speed)
-    {
-        Time.timeScale = speed;
-    }
+    public void SetTimeSpeed(int speed) => Time.timeScale = speed;
+    public void SetRepeating(bool repeating) => Repeating = repeating;
 
     private void Start()
     {
+        Time.timeScale = 4;
+
         instance = this;
 
         //scalePreserverance = _Canvas.GetComponent<CanvasScaler>().referenceResolution.x / _Canvas.GetComponent<RectTransform>().rect.width;
@@ -83,7 +85,14 @@ public class TaskInvokingSystem : MonoBehaviour
     {
         Debug.Log(TimeElapsed);
 
-        if (timeThresholds.Count == 0 || TimeElapsed >= timeThresholds[timeThresholds.Count - 1]) return;
+        if (timeThresholds.Count == 0) return;
+
+        if (TimeElapsed >= timeThresholds[timeThresholds.Count - 1])
+        {
+            if (Repeating)
+                Restart();
+            return;
+        }
 
         TimeElapsed++;
 
@@ -156,7 +165,7 @@ public class TaskInvokingSystem : MonoBehaviour
         float y = (Tasks[0].transform.localPosition.y + Tasks[Tasks.Count - 1].transform.localPosition.y) / 2f;
         // y - средняя позиция между первой и последней задачей
 
-        TimeBarParent.localPosition = new Vector3(-200, y, 0);
+        TimeBarParent.localPosition = new Vector3(TimeBarShift, y, 0);
         TimeBarParent.sizeDelta = new Vector2(15, height);
         TimeBar.sizeDelta = new Vector2(15, height);
 
@@ -182,7 +191,7 @@ public class TaskInvokingSystem : MonoBehaviour
 
         TimeElapsed = 0;
         TimeBar.localPosition = Vector3.up * TimeBar.rect.height;
-        TimeElapsed = 0;
+        CurrentTaskIndex = 0;
 
         for (int i = 0; i < Tasks.Count; i++)
         {
