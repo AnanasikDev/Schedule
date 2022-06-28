@@ -16,6 +16,18 @@ public class Task : MonoBehaviour
     {
         DoneToggle.isOn = false;
     }
+
+    public void SetTitle(string title)
+    {
+        TitleInputField.text = title;
+        UpdateTitle();
+    }
+    public void SetDuration(uint duration)
+    {
+        DurationInputField.text = (duration / 60).ToString();
+        UpdateDuration();
+    }
+
     public void UpdateTitle()
     {
         TaskInfo.Title = TitleInputField.text;

@@ -15,20 +15,25 @@ public class TaskInvokingSystem : MonoBehaviour
     [SerializeField] private Vector3 origin = new Vector3(0, 0, 0);
     [SerializeField] private float TimeBarShift = -200;
     private float TaskHeight = 60;
+    [SerializeField] private uint TasksScrollThreshold = 3;
+    [SerializeField] private float ScrollingSpeed = 8f;
+    [SerializeField] private string TasksAmountTextTemplate = "{0} tasks"; // 0 - amount
 
     [SerializeField] private Canvas _Canvas;
     [SerializeField] private Button AddTaskButton;
     [SerializeField] private RectTransform TimeBarParent;
     [SerializeField] private RectTransform TimeBar;
     [SerializeField] private TextMeshProUGUI TimeElapsedTMPro;
+    [SerializeField] private TextMeshProUGUI TasksAmountTMPro;
 
     [Header("Read-only")]
-    [SerializeField] private List<Task> Tasks;
+    public List<Task> Tasks;
     [SerializeField] private List<uint> timeThresholds; // Массив точек времени i, когда i-ая задача заканчивается и начинается i+1
     [SerializeField] private int CurrentTaskIndex = 0;
     [SerializeField] private uint TimeElapsed = 0;
     [SerializeField] private float scalePreserverance = 1f;
     [SerializeField] private bool Repeating = false;
+    [SerializeField] private float gapHeight;
 
     public static TaskInvokingSystem instance { get; private set; }
 
@@ -36,6 +41,7 @@ public class TaskInvokingSystem : MonoBehaviour
     {
         Tasks.Remove(task);
         TasksInfo.Remove(task.TaskInfo);
+        TasksAmountTMPro.text = string.Format(TasksAmountTextTemplate, Tasks.Count);
 
         RecalculateTasksPositions();
 
@@ -61,8 +67,6 @@ public class TaskInvokingSystem : MonoBehaviour
 
     private void Start()
     {
-        Time.timeScale = 4;
-
         instance = this;
 
         //scalePreserverance = _Canvas.GetComponent<CanvasScaler>().referenceResolution.x / _Canvas.GetComponent<RectTransform>().rect.width;
@@ -80,11 +84,24 @@ public class TaskInvokingSystem : MonoBehaviour
 
         InvokeRepeating("TickUpdate", 1, 1);
     }
-
+    private void Update()
+    {
+        if (Tasks.Count >= TasksScrollThreshold)
+        {
+            if (Input.mouseScrollDelta.y != 0)
+            {
+                TasksHandler.transform.localPosition =
+                    new Vector3
+                    (
+                        TasksHandler.localPosition.x,
+                        Mathf.Clamp(TasksHandler.localPosition.y + -Hexath.SnapNumberToStep(Input.mouseScrollDelta.y, 1) * ScrollingSpeed, 0, (Tasks.Count - TasksScrollThreshold) * TaskHeight + gapHeight),
+                        TasksHandler.localPosition.z
+                    );
+            }
+        }
+    }
     private void TickUpdate()
     {
-        Debug.Log(TimeElapsed);
-
         if (timeThresholds.Count == 0) return;
 
         if (TimeElapsed >= timeThresholds[timeThresholds.Count - 1])
@@ -100,13 +117,10 @@ public class TaskInvokingSystem : MonoBehaviour
 
         TimeBar.transform.localPosition += Vector3.down * (50 * scalePreserverance / TasksInfo[CurrentTaskIndex].DurationSeconds);
 
-        float gapHeight = (TaskHeight * 1.1f * scalePreserverance) - 50 * scalePreserverance;
-        EasyDebug.Log("gap height =", gapHeight);
+        gapHeight = (TaskHeight * 1.1f * scalePreserverance) - 50 * scalePreserverance;
 
         if (TimeElapsed >= timeThresholds[CurrentTaskIndex] && CurrentTaskIndex < Tasks.Count)
         {
-            EasyDebug.Log($"Task {TasksInfo[CurrentTaskIndex].Title} : {Tasks[CurrentTaskIndex].TaskInfo.Title} finished on time {TimeElapsed}");
-
             NotificationSystem.instance.Notify();
             Tasks[CurrentTaskIndex].OnFinished();
 
@@ -125,6 +139,14 @@ public class TaskInvokingSystem : MonoBehaviour
         }
     }
 
+    public void CreateTask(string title, uint duration)
+    {
+        CreateTask();
+        Task t = Tasks[Tasks.Count - 1];
+        t.SetTitle(title);
+        t.SetDuration(duration);
+    }
+
     public void CreateTask()
     {
         //scalePreserverance = _Canvas.GetComponent<CanvasScaler>().referenceResolution.x / _Canvas.GetComponent<RectTransform>().rect.width;
@@ -139,6 +161,8 @@ public class TaskInvokingSystem : MonoBehaviour
 
         Tasks.Add(task);
         TasksInfo.Add(task.TaskInfo);
+
+        TasksAmountTMPro.text = string.Format(TasksAmountTextTemplate, Tasks.Count);
 
         SetUpAddTaskButton();
 
@@ -160,7 +184,7 @@ public class TaskInvokingSystem : MonoBehaviour
 
         //TimeBarParent.localPosition = Tasks[0].transform.localPosition + Vector3.right * -200;
 
-        float gapHeight = (TaskHeight * 1.1f * scalePreserverance) - 50 * scalePreserverance;
+        gapHeight = (TaskHeight * 1.1f * scalePreserverance) - 50 * scalePreserverance;
         float height = Tasks.Count * 50 * scalePreserverance + gapHeight * (Tasks.Count - 1);
         float y = (Tasks[0].transform.localPosition.y + Tasks[Tasks.Count - 1].transform.localPosition.y) / 2f;
         // y - средняя позиция между первой и последней задачей
@@ -194,9 +218,17 @@ public class TaskInvokingSystem : MonoBehaviour
         CurrentTaskIndex = 0;
 
         for (int i = 0; i < Tasks.Count; i++)
-        {
+        {   
             Tasks[i].ResetTask();
         }
+    }
+    public void Quit()
+    {
+#if UNITY_EDITOR
+    UnityEditor.EditorApplication.isPlaying = false;
+#else
+    Application.Quit();
+#endif
     }
 }
 
