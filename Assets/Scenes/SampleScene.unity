@@ -429,6 +429,49 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 103185717}
   m_CullTransparentMesh: 1
+--- !u!1 &427026373
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 427026374}
+  - component: {fileID: 427026375}
+  m_Layer: 0
+  m_Name: System Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &427026374
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 427026373}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 514.1715, y: 348.7569, z: -46.79041}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &427026375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 427026373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cb29bfaf27f8f04b9118cabb97580b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &474793943
 GameObject:
   m_ObjectHideFlags: 0
@@ -1610,6 +1653,7 @@ MonoBehaviour:
   TimeBar: {fileID: 1368143239}
   TimeElapsedTMPro: {fileID: 1366168389}
   TasksAmountTMPro: {fileID: 1776188045}
+  TitleInputField: {fileID: 1631599550}
   Tasks: []
   timeThresholds: 
   CurrentTaskIndex: 0
@@ -1617,6 +1661,7 @@ MonoBehaviour:
   scalePreserverance: 1
   Repeating: 0
   gapHeight: 0
+  Title: 
 --- !u!4 &1383704600
 Transform:
   m_ObjectHideFlags: 0
@@ -2144,7 +2189,19 @@ MonoBehaviour:
       m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1383704599}
+        m_TargetAssemblyTypeName: TaskInvokingSystem, Assembly-CSharp
+        m_MethodName: UpdateTitle
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnTouchScreenKeyboardStatusChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2763,8 +2820,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1383704599}
-        m_TargetAssemblyTypeName: TaskInvokingSystem, Assembly-CSharp
+      - m_Target: {fileID: 427026375}
+        m_TargetAssemblyTypeName: SystemController, Assembly-CSharp
         m_MethodName: Quit
         m_Mode: 1
         m_Arguments:

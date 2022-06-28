@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
@@ -25,6 +24,7 @@ public class TaskInvokingSystem : MonoBehaviour
     [SerializeField] private RectTransform TimeBar;
     [SerializeField] private TextMeshProUGUI TimeElapsedTMPro;
     [SerializeField] private TextMeshProUGUI TasksAmountTMPro;
+    [SerializeField] private TMP_InputField TitleInputField;
 
     [Header("Read-only")]
     public List<Task> Tasks;
@@ -34,8 +34,16 @@ public class TaskInvokingSystem : MonoBehaviour
     [SerializeField] private float scalePreserverance = 1f;
     [SerializeField] private bool Repeating = false;
     [SerializeField] private float gapHeight;
+    public string Title;
 
     public static TaskInvokingSystem instance { get; private set; }
+
+    public void SetTitle(string title)
+    {
+        Title = title;
+        TitleInputField.text = Title;
+    }
+    public void UpdateTitle() => Title = TitleInputField.text;
 
     public void DeleteTask(Task task)
     {
@@ -62,7 +70,6 @@ public class TaskInvokingSystem : MonoBehaviour
             timeThresholds.Add(thr);
         }
     }
-    public void SetTimeSpeed(int speed) => Time.timeScale = speed;
     public void SetRepeating(bool repeating) => Repeating = repeating;
 
     private void Start()
@@ -209,6 +216,15 @@ public class TaskInvokingSystem : MonoBehaviour
         }
         SetUpAddTaskButton();
     }
+    public void Flush()
+    {
+        for (int i = Tasks.Count-1; i >= 0; i--)
+            Tasks[i].DeleteTask();
+
+        Tasks.Clear();
+        TasksInfo.Clear();
+        timeThresholds.Clear();
+    }
     public void Restart()
     {
         TimeElapsedTMPro.text = "0 mins elapsed";
@@ -222,33 +238,4 @@ public class TaskInvokingSystem : MonoBehaviour
             Tasks[i].ResetTask();
         }
     }
-    public void Quit()
-    {
-#if UNITY_EDITOR
-    UnityEditor.EditorApplication.isPlaying = false;
-#else
-    Application.Quit();
-#endif
-    }
 }
-
-
-
-/*class LiveTileHelper
-{
-    [DllExport(CallingConvention.StdCall)]
-    public static string UpdatePrimaryTile(string text, int durationSeconds = 10)
-    {
-        var template = Windows.UI.Notifications.TileTemplateType.TileSquare150x150Block;
-        var tileXml = Windows.UI.Notifications.TileUpdateManager.GetTemplateContent(template);
-
-        var tileTextAttributes = tileXml.GetElementsByTagName("text");
-        tileTextAttributes[0].AppendChild(tileXml.CreateTextNode(text));
-
-        var tileNotification = new Windows.UI.Notifications.TileNotification(tileXml);
-
-        tileNotification.ExpirationTime = DateTime.Now.AddSeconds(durationSeconds);
-        Windows.UI.Notifications.TileUpdateManager.CreateTileUpdaterForApplication().Update(tileNotification);
-        return "Ok";
-    }
-}*/

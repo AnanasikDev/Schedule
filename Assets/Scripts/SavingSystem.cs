@@ -27,6 +27,7 @@ public class SavingSystem : MonoBehaviour
 
         using (StreamWriter writer = new StreamWriter(path))
         {
+            writer.WriteLine(Encode("Title", TaskInvokingSystem.instance.Title));
             writer.WriteLine(Encode("Tasks count", tasks.Count.ToString()));
             for (int i = 0; i < tasks.Count; i++)
             {
@@ -45,20 +46,24 @@ public class SavingSystem : MonoBehaviour
     {
         line++;
     }
+    private void Flush()
+    {
+        line = -1;
+    }
     public void LoadCase()
     {
-        TaskInvokingSystem.instance.Tasks.Clear();
+        Flush();
+
+        TaskInvokingSystem.instance.Flush();
 
         using (StreamReader reader = new StreamReader(path))
         {
             file = reader.ReadToEnd().Split('\n');
 
-            /*EasyDebug.LogCollectionSep("; ", file);
-            EasyDebug.Log(file.Length);*/
+            string doc_title = ReadNext();
+            TaskInvokingSystem.instance.SetTitle(doc_title);
 
-            string s = ReadNext();
-            EasyDebug.LogCollection(s);
-            int tasksCount = int.Parse(s);
+            int tasksCount = int.Parse(ReadNext());
 
             Task[] tasks = new Task[tasksCount];
 
