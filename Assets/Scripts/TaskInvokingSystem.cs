@@ -86,6 +86,7 @@ public class TaskInvokingSystem : MonoBehaviour
         Application.runInBackground = true;
 
         GenerateTasksGUI();
+        UpdateTitle();
 
         TimeBar.localPosition = Vector3.up * TimeBar.rect.height;
 
