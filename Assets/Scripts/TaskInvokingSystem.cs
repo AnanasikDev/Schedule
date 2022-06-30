@@ -83,7 +83,7 @@ public class TaskInvokingSystem : MonoBehaviour
 
         CalculateTimeThresholds();
 
-        Application.runInBackground = true;
+        UpdateTimeCounter();
 
         GenerateTasksGUI();
         UpdateTitle();
@@ -108,6 +108,11 @@ public class TaskInvokingSystem : MonoBehaviour
             }
         }
     }
+    public void UpdateTimeCounter()
+    {
+        uint limit = timeThresholds.Count > 0 ? timeThresholds[timeThresholds.Count - 1] / 60 : 0;
+        TimeElapsedTMPro.text = Math.Round(TimeElapsed / 60f, 2).ToString("0.00") + " / " + (limit).ToString() + " mins";
+    }
     private void TickUpdate()
     {
         if (timeThresholds.Count == 0) return;
@@ -121,7 +126,7 @@ public class TaskInvokingSystem : MonoBehaviour
 
         TimeElapsed++;
 
-        TimeElapsedTMPro.text = Math.Round(TimeElapsed / 60f, 2).ToString() + " mins elapsed";
+        UpdateTimeCounter();
 
         TimeBar.transform.localPosition += Vector3.down * (50 * scalePreserverance / TasksInfo[CurrentTaskIndex].DurationSeconds);
 
@@ -228,11 +233,11 @@ public class TaskInvokingSystem : MonoBehaviour
     }
     public void Restart()
     {
-        TimeElapsedTMPro.text = "0 mins elapsed";
-
         TimeElapsed = 0;
         TimeBar.localPosition = Vector3.up * TimeBar.rect.height;
         CurrentTaskIndex = 0;
+
+        UpdateTimeCounter();
 
         for (int i = 0; i < Tasks.Count; i++)
         {   

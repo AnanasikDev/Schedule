@@ -4,15 +4,25 @@ using System.IO;
 using TMPro;
 public class SavingSystem : MonoBehaviour
 {
+    private string path = "sd_cache";
+
     private string path1 = "sd_cache/Schedule_saving_file_1.txt";
     private string path2 = "sd_cache/Schedule_saving_file_2.txt";
     private string path3 = "sd_cache/Schedule_saving_file_3.txt";
     private char separator = ':';
 
-    [SerializeField] private TMP_InputField[] CaseTitleInputFields;
-
     private string[] file;
     private int line = 0 - 1; // -1 for ++line been working
+
+    public TextMeshProUGUI[] CasesTitleTexts;
+
+    private void Start()
+    {
+        bool exists = System.IO.Directory.Exists(path);
+
+        if (!exists)
+            System.IO.Directory.CreateDirectory(path);
+    }
 
     private string GetPath(int index)
     {
@@ -39,8 +49,9 @@ public class SavingSystem : MonoBehaviour
 
         using (StreamWriter writer = new StreamWriter(GetPath(index)))
         {
-            writer.WriteLine(Encode("Case", CaseTitleInputFields[index].text));
+            //writer.WriteLine(Encode("Case", CaseTitleInputFields[index].text));
             writer.WriteLine(Encode("Title", TaskInvokingSystem.instance.Title));
+            CasesTitleTexts[index].text = TaskInvokingSystem.instance.Title;
             writer.WriteLine(Encode("Tasks count", tasks.Count.ToString()));
             for (int i = 0; i < tasks.Count; i++)
             {
@@ -73,10 +84,11 @@ public class SavingSystem : MonoBehaviour
         {
             file = reader.ReadToEnd().Split('\n');
 
-            CaseTitleInputFields[index].text = ReadNext();
+            //CaseTitleInputFields[index].text = ReadNext();
 
             string doc_title = ReadNext();
             TaskInvokingSystem.instance.SetTitle(doc_title);
+            CasesTitleTexts[index].text = doc_title;
 
             int tasksCount = int.Parse(ReadNext());
 

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SystemController : MonoBehaviour
@@ -13,4 +11,17 @@ public class SystemController : MonoBehaviour
 #endif
     }
     public void SetTimeSpeed(int speed) => Time.timeScale = speed;
+
+    private void Start()
+    {
+        Application.runInBackground = true;
+        Screen.fullScreen = false;
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F11))
+        {
+            Screen.fullScreen = !Screen.fullScreen;
+        }
+    }
 }

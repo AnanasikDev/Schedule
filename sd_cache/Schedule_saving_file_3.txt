@@ -1,6 +1,5 @@
-Case:Case 3
-Title:312
-Tasks count:7
+Title:ASDasd
+Tasks count:3
 --Task 0
 Task title:Task
 Task duration seconds:1800
@@ -8,17 +7,5 @@ Task duration seconds:1800
 Task title:Task
 Task duration seconds:1800
 --Task 2
-Task title:Task
-Task duration seconds:1800
---Task 3
-Task title:Task
-Task duration seconds:1800
---Task 4
-Task title:Task
-Task duration seconds:1800
---Task 5
-Task title:Task
-Task duration seconds:1800
---Task 6
 Task title:Task
 Task duration seconds:1800

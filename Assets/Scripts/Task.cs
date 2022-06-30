@@ -39,6 +39,7 @@ public class Task : MonoBehaviour
 
         TaskInvokingSystem.instance.CalculateTimeThresholds();
     }
+    public void UpdateTimeCounter() => TaskInvokingSystem.instance.UpdateTimeCounter();
     public void OnSpawned()
     {
         DurationInputField.text = TaskInfo.DurationSeconds.ToString();

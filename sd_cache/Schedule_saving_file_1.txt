@@ -1,12 +1,11 @@
-Case:Case 1
-Title:jjjbdnKASJD1111323333233
+Title:ASDasd
 Tasks count:3
 --Task 0
-Task title:Tas1
-Task duration seconds:60
+Task title:Task
+Task duration seconds:1800
 --Task 1
-Task title:Ta1sk
-Task duration seconds:660
+Task title:Task
+Task duration seconds:1800
 --Task 2
-Task title:1231111
-Task duration seconds:6660
+Task title:Task
+Task duration seconds:1800

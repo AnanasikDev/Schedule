@@ -1,12 +1,26 @@
-Case:Case 2
-Title:jjjbdnKASJD1111
-Tasks count:3
+Title:Ananaseek's daily schedule
+Tasks count:8
 --Task 0
-Task title:Tas1
-Task duration seconds:60
+Task title:Task
+Task duration seconds:300
 --Task 1
-Task title:Ta1sk
-Task duration seconds:660
+Task title:Task
+Task duration seconds:720
 --Task 2
-Task title:1231111
-Task duration seconds:6660
+Task title:Task
+Task duration seconds:240
+--Task 3
+Task title:Task
+Task duration seconds:3360
+--Task 4
+Task title:Task
+Task duration seconds:1380
+--Task 5
+Task title:Task
+Task duration seconds:18120
+--Task 6
+Task title:Task
+Task duration seconds:120
+--Task 7
+Task title:Task
+Task duration seconds:1800
